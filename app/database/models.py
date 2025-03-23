@@ -1,4 +1,6 @@
-SQL_ALCHEMY = "postgresql+asyncpg://postgres:deadpool23923@localhost/telegramDB"
+# SQL_ALCHEMY = "postgresql+asyncpg://postgres:deadpool23923@localhost/telegramDB"
+SQL_ALCHEMY = "postgresql+asyncpg://postgres:X7nyLp64byVa1y4ADP5oNu4lRNyXp6rq@dpg-cvg3tkofnakc739tjec0-a/telegramDB"
+
 
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
