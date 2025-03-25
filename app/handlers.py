@@ -241,7 +241,7 @@ async def go_chat_cmd(message: Message, state: FSMContext, bot:Bot):
     else:
         await message.answer('Подождите ответа...')
 
-@router.message(Command('tarrifs'))
+@router.message(Command('subscribe'))
 async def go_chat_cmd(message: Message, state: FSMContext):
     user_id = message.from_user.id
     is_registered = await rq.is_registered(user_id)

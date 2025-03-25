@@ -357,24 +357,6 @@ async def get_context(tg_id):
             print('оставшейся контекст: ' + context_message)
             return [context, context_message]
 
-async def get_context_mental_analysis(tg_id):
-    async with async_session() as session:
-        user_message = await session.scalars(select(User_messages).where(User_messages.user_id == tg_id).order_by(User_messages.time_message.asc()))
-        if user_message:
-            context = ""
-            for msg in user_message:
-                context += (f"{msg.message} \n")
-            print(context)
-            context_message = f"""РОЛЬ: психолог с 20 летним стажем, который помогает людям находить поврежденные убеждения и заменять их на здоровые. изучи базовые убеждения {text_from_file}. изучи переписку с пользователем: \n {context} и найди его поврежденные убеждения. помоги пользователю разобраться в причине возникновения поврежденных убеждений и заменить их здоровыми
-
-выдай ответ в формате монолога разбора психолога.
-
-структура и пример ответа: 
-1. найденная фраза с поврежденным убеждением. "твое поврежденное убеждение. Однажды ты написал фразу ..., на самом деле это твое поврежденное убеждение".
-2. возможная причина (если она понятна из контекста). "Возможная причина. убеждения уровня ... обычно формируются в ... лет. Это могло случиться из-за ..."
-3. Здоровое убеждение на замену. "Здоровое убеждение. Давай заменим его на здоровое убеждение ... ".
- \n"""
-            return context_message
 
 async def check_condition_mental_analysis(tg_id):
      async with async_session() as session:
