@@ -213,7 +213,7 @@ async def skip_name_bot(callback_query: CallbackQuery, state: FSMContext):
     await rq.success_registration(user_id)
     await callback_query.answer()
     await split_text(messages.success_registration_message, callback_query.message, kb.main)
-    await state.set_state(chatStates.startChat)
+    await state.set_state(chatStates.mainChat)
 
 
 
