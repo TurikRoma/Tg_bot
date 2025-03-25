@@ -2,7 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton,InlineKeyboardMark
 from aiogram.utils.keyboard import InlineKeyboardBuilder  
 
 main = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Переход в чат', callback_data='go_chat')],
-                                             [InlineKeyboardButton(text='Тарифы', callback_data='tariffs')],
+                                             [InlineKeyboardButton(text='Приобрести подписку', callback_data='tariffs')],
                                              [InlineKeyboardButton(text='Профиль', callback_data='profile')],
                                              [InlineKeyboardButton(text='Ментальный анализ', callback_data='mental_analysis')]])
 
@@ -12,7 +12,7 @@ withoutTariffs = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(tex
                                              ])
 
 withoutMentalAnalysis = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Переход в чат', callback_data='go_chat')],
-                                             [InlineKeyboardButton(text='Тарифы', callback_data='tariffs')],
+                                             [InlineKeyboardButton(text='Приобрести подписку', callback_data='tariffs')],
                                              [InlineKeyboardButton(text='Профиль', callback_data='profile')],
                                              ])
 
@@ -20,7 +20,7 @@ withoutMentalAnalysis = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardBut
 get_number = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Отправить номер', request_contact=True)]],
                                  resize_keyboard=True)
 
-tarrifs = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Тарифы', callback_data='tariffs')]])
+tarrifs = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Приобрести подписку', callback_data='tariffs')]])
 
 registration = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Регистрация', callback_data='registration')],
                                              ])
@@ -31,6 +31,20 @@ sex = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Мужс
 
 skip = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Пропустить', callback_data='skip')],
                                              ])
+
+name_bot = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Пропустить', callback_data='skip_name_bot')],
+                                             ])
+mental_analysis_choise = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Хочу попробовать', callback_data='try_mental_analysis')],
+                                                               [InlineKeyboardButton(text='Нет, вернуться в чат с Бадди', callback_data='back_to_bot')],
+                                             ])
+mental_analysis_condition = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Болтать с Бадди', callback_data='back_to_bot')],
+                                                               [InlineKeyboardButton(text='Уже готово!', callback_data='start_mental_analysis')],
+                                             ])
+
+back_to_bot = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Болтать с Бадди', callback_data='back_to_bot')],
+                                             ])
+
+
 
 
 
