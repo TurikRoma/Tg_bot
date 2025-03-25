@@ -156,7 +156,7 @@ async def subscribe(tg_id, sub_name, date):
                     update(User_sub).where(User_sub.user_id == tg_id).values(
                         sub=sub_name,
                         time_sub=date,
-                        time_end=date + relativedelta(minutes=2)
+                        time_end=date + relativedelta(months=1)
                     ))
                 
                 await session.commit()
@@ -166,13 +166,13 @@ async def subscribe(tg_id, sub_name, date):
                     update(User_sub).where(User_sub.user_id == tg_id).values(
                         sub=sub_name,
                         time_sub=date,
-                        time_end=date + relativedelta(minutes=2)
+                        time_end=date + relativedelta(months=1)
                     ))
 
                 await session.commit()
         else:
             user.sub = True
-            session.add(User_sub(user_id=tg_id, sub=sub_name, time_sub=date, time_end=date + relativedelta(minutes=2)))
+            session.add(User_sub(user_id=tg_id, sub=sub_name, time_sub=date, time_end=date + relativedelta(months=1)))
             await session.commit()
 
 async def set_user_message(tg_id, username,is_trial, message, answer, time_mes, time_answ):
