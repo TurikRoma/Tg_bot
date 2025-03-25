@@ -17,18 +17,30 @@ from app.generators import gpt, mental_analysis_gpt
 
 from app.payment import send_invoice_handler
 
+import app.variables as messages
+
 router = Router()
 import asyncio
 
 
 
-
+async def split_text(text, type_answer, keyboard=None):
+    context = text.split('---')
+    for q in range(len(context)):
+        if keyboard!= None and q == len(context)-1:
+            await type_answer.answer(context[q], reply_markup=keyboard)
+        else:
+            await type_answer.answer(context[q])
+            await asyncio.sleep(0.8)
+        
+    
 
 class chatStates(StatesGroup):
     set_name = State()
     set_age = State()
     set_sex = State()
     set_description_bot = State()
+    set_name_bot = State()
     mainChat = State()
     tariffsChat = State()
     profileChat = State()
@@ -42,6 +54,7 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
     response = await rq.offline(user_id, current_date)
     if response:
         await bot.send_message(chat_id=user_id, text="Вас давно не было. Как ваши дела? Может вас что то беспокоит?")
+        await rq.set_user_log(user_id, "offline_message", "Сообщение от бота по истечению 1 дня", current_date)
         await send_message(user_id, state, bot)
     else:
         await send_message(user_id, state, bot)
@@ -107,21 +120,19 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
             username = "Без имени"
 
         await rq.set_user(user_id, username, message.from_user.is_premium!=None)
-        await message.answer("""Привет! 👋
-    Добро пожаловать в наш телеграм-бот! Мы рады видеть вас здесь. 😊.
-    Для дальнейшего пользования пожалуйста зарегестрируйтесь
-    Вот что вы можете сделать с нашим ботом:""", reply_markup=kb.registration)
+        await split_text(messages.welcoming_message, message)
+        await state.set_state(chatStates.set_name)
         await send_message(user_id, state, bot)
     else: 
         await message.answer('Подождите ответа...')
 
 # ------- registration
 
-@router.callback_query(lambda callback_query: callback_query.data == 'registration')
-async def start_registration(callback_query: CallbackQuery, state:FSMContext):
-    await state.set_state(chatStates.set_name)
-    await callback_query.message.answer("ВВедите ваше имя:")
-    await callback_query.answer()
+# @router.callback_query(lambda callback_query: callback_query.data == 'registration')
+# async def start_registration(callback_query: CallbackQuery, state:FSMContext):
+#     await state.set_state(chatStates.set_name)
+#     await callback_query.message.answer("ВВедите ваше имя:")
+#     await callback_query.answer()
     
 
 @router.message(chatStates.set_name)
@@ -131,33 +142,34 @@ async def registr_set_name(message:Message, state:FSMContext):
         return
     user_id =  message.from_user.id
     nickname = message.text
-    await message.answer("Введите ваш возраст")
+    await message.answer("Выбери свой пол", reply_markup=kb.sex)
     await rq.set_nickname(user_id, nickname)
-    await state.set_state(chatStates.set_age)
+    await state.set_state(chatStates.set_sex)
 
 @router.message(chatStates.set_age)
 async def registr_age(message:Message, state:FSMContext):
     if not message.text or not message.text.isdigit():
-        await message.answer("Пожалуйста введите ваш возраст")
+        await message.answer("Напиши, сколько тебе лет?")
         return
     
     elif int(message.text) > 100:
-        await message.answer("Пожалуйста введите ваш возраст")
+        await message.answer("Напиши, сколько тебе лет?")
         return
     user_id =  message.from_user.id
     age =  message.text
     await rq.set_age(user_id, age)
-    await state.set_state(chatStates.set_sex)
-    await message.answer("Выберите пол", reply_markup=kb.sex)
+    await state.set_state(chatStates.set_description_bot)
+    await split_text(messages.bot_description_message, message, kb.skip)
+    
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith('sex_'))
 async def registr_sex(callback_query: CallbackQuery, state:FSMContext):
     sex = callback_query.data.split('_')[1]
     user_id = callback_query.from_user.id
     await rq.set_sex(user_id, sex)
-    await callback_query.message.answer("Введите как вы виде описание для бота, каким вы хотите его видеть(Можно пропустить)", reply_markup=kb.skip)
+    await callback_query.message.answer("Напиши, сколько тебе лет")
     await callback_query.answer()
-    await state.set_state(chatStates.set_description_bot)
+    await state.set_state(chatStates.set_age)
 
 
 @router.message(chatStates.set_description_bot)
@@ -167,24 +179,41 @@ async def registr_set_description_bot(message:Message, state:FSMContext):
         return
     description = message.text
     user_id = message.from_user.id
-    await rq.success_registration(user_id)
-    await message.answer("Поздравляю вы успешно завершили регистрацию. Вот какие функции достпуспны в боте", reply_markup=kb.main)
+    await message.answer("Придумай мне имя. Ты можешь дать мне имя или называть просто Баддик")
     await rq.set_bot_description(user_id, description)
-    await state.set_state(chatStates.startChat)
+    await state.set_state(chatStates.set_name_bot)
     
 
 
 @router.callback_query(lambda callback_query: callback_query.data == 'skip')
 async def skip_description_bot(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer()
+    await callback_query.message.answer("Придумай мне имя. Ты можешь дать мне имя или называть просто Баддик")
+    await state.set_state(chatStates.set_name_bot)
+
+    
+    
+
+@router.message(chatStates.set_name_bot)
+async def registr_set_name_bot(message:Message, state:FSMContext):
+    if message.text == None:
+        await message.answer("Пожалуйста введите имя бота")
+        return
+    name = message.text
+    user_id = message.from_user.id
+    await rq.success_registration(user_id)
+    user_nickname = await rq.get_user_name(user_id)
+    await split_text(messages.success_registration_message.format(user_nickname), message,  kb.main)
+    await rq.set_bot_name(user_id, name)
+    await state.set_state(chatStates.startChat)
+
+@router.callback_query(lambda callback_query: callback_query.data == 'skip_name_bot')
+async def skip_name_bot(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
     await rq.success_registration(user_id)
     await callback_query.answer()
-    await callback_query.message.answer("Поздравляю вы успешно завершили регистрацию. Вот какие функции достпуспны в боте", reply_markup=kb.main)
+    await split_text(messages.success_registration_message, callback_query.message, kb.main)
     await state.set_state(chatStates.startChat)
-    
-
-
-
 
 
 
@@ -208,7 +237,7 @@ async def go_chat_cmd(message: Message, state: FSMContext, bot:Bot):
         await rq.check_sub(user_id)
         await get_logs(user_id, state, "mainChat", 'command')
         await state.set_state(chatStates.mainChat)
-        await message.answer("Вы перешли в чат с нейронкой, напишите ей сообщение и она вам ответит!")
+        await message.answer("Вы перешли в чат с Бадди, напишите ей сообщение и она вам ответит!")
     else:
         await message.answer('Подождите ответа...')
 
@@ -248,14 +277,12 @@ async def go_chat_cmd(message: Message, state: FSMContext):
 
         response = await rq.get_user_sub_info(user_id)
         await state.set_state(chatStates.profileChat)
+        
         if (response == "none"):
-            await message.answer("У вас нету тарифа, пожалуйста купите тариф или воспользуйтесь другой функцией бота",
-                                                reply_markup=kb.main)
+            await message.answer("Приобрети подписку, чтобы болтать с Бадди и узнавать о себе больше",
+                                                reply_markup=kb.tarrifs)
         else:
-            await message.answer(f"""Вот инфоормация о состоянии вашего тарифа:
-Ваш индефикационный номер: {response[2]}
-Ваш тариф: {response[0]}
-{response[1]}""", reply_markup=kb.main)
+            await message.answer(messages.profile.format(user_id, "✅ Активна"), reply_markup=kb.main)
     else: 
         await message.answer('Подождите ответа...')
 
@@ -268,11 +295,7 @@ async def mental_analysis_cmd(message:Message, state: FSMContext):
         await message.answer('Зарегестрируйтесь пожалуйста')
         return
     await state.set_state(chatStates.mentalAnalysisChat)
-    context = await rq.get_context_mental_analysis(user_id)
-    response = await mental_analysis_gpt(context)
-
-    await message.answer(response)
-    await state.set_state(chatStates.mainChat)
+    await split_text(messages.mental_analysis_message, message, kb.mental_analysis_choise)
     
 
 @router.message(Command('refund'))
@@ -373,7 +396,7 @@ async def go_chat(callback_query: CallbackQuery, state: FSMContext):
     await get_logs(user_id,state, "mainChat", 'btn')
     await rq.check_sub(user_id)
     await state.set_state(chatStates.mainChat)
-    await callback_query.message.answer("Вы перешли в чат с нейронкой, напишите ей сообщение и она вам ответит!")
+    await callback_query.message.answer("Вы перешли в чат с Бадди, напишите ей сообщение и она вам ответит!")
     await callback_query.answer()
 
 
@@ -391,7 +414,11 @@ async def mainChat_message(message: Message, state: FSMContext, bot:Bot):
         check_sub_response = await rq.check_sub(user_id)
         amount_messages = await rq.check_amount_messages(user_id)
         is_sub = await rq.is_sub(user_id)
-        if is_sub or amount_messages < 10:
+        max_len_message = 50
+        if amount_messages[1] % 2 == 0:
+            max_len_message = 100
+
+        if is_sub or amount_messages[0] < max_len_message:
             await state.set_state(chatStates.generateText)
             time_message = datetime.now()
             username = message.from_user.username
@@ -425,7 +452,15 @@ async def mainChat_message(message: Message, state: FSMContext, bot:Bot):
                                 reply_markup=kb.tarrifs)
             await rq.set_user_log(user_id, 'error-message', 'Free messages end', current_date)
             
-   
+@router.callback_query(lambda callback_query: callback_query.data == 'back_to_bot')
+async def go_chat(callback_query: CallbackQuery, state: FSMContext):
+    user_id = callback_query.from_user.id
+    await get_logs(user_id,state, "mainChat", 'btn')
+    await rq.check_sub(user_id)
+    await state.set_state(chatStates.mainChat)
+    await callback_query.message.answer("Вы перешли в чат с Бадди, напишите ей сообщение и она вам ответит!")
+    await callback_query.answer()  
+
 # --------Chat
 
 # --------Profile
@@ -439,14 +474,11 @@ async def profile(callback_query: CallbackQuery, state: FSMContext):
     response = await rq.get_user_sub_info(user_id)
     await state.set_state(chatStates.profileChat)
     if (response == "none"):
-        await callback_query.message.answer("У вас нету тарифа, пожалуйста купите тариф или воспользуйтесь другой функцией бота",
-                                            reply_markup=kb.main)
+        await callback_query.message.answer("Приобрети подписку, чтобы болтать с Бадди и узнавать о себе больше",
+                                            reply_markup=kb.tarrifs)
         await callback_query.answer()
     else:
-        await callback_query.message.answer(f"""Вот инфоормация о состоянии вашего тарифа:
-Ваш индефикационный номер: {response[0]}
-Ваш тариф: {response[0]}
-{response[1]}""", reply_markup=kb.main)
+        await callback_query.message.answer(messages.profile.format(user_id, "✅ Активна"), reply_markup=kb.main)
     await callback_query.answer()
     
 
@@ -467,12 +499,42 @@ async def tariffs_message(message: Message):
 @router.callback_query(lambda callback_query: callback_query.data == 'mental_analysis')
 async def mental_analysis(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(chatStates.mentalAnalysisChat)
-    await callback_query.message.answer("Тут должна быть реализация ментального анализа")
+    await split_text(messages.mental_analysis_message, callback_query.message, kb.mental_analysis_choise)
     await callback_query.answer()
+
+@router.callback_query(lambda callback_query: callback_query.data == 'try_mental_analysis')
+async def try_mental_analysis(callback_query: CallbackQuery):
+    await callback_query.answer();
+    await split_text(messages.try_mental_analysis_message, callback_query.message, kb.mental_analysis_condition)
+
+
+@router.callback_query(lambda callback_query: callback_query.data == 'start_mental_analysis')
+async def start_mental_analysis(callback_query: CallbackQuery, state: FSMContext):
+    user_id = callback_query.from_user.id
+    is_checked  = await rq.check_condition_mental_analysis(user_id)
+    if is_checked == 'not sub':
+        await split_text(messages.mental_analysis_not_sub_message, callback_query.message, kb.tarrifs)
+        await callback_query.answer()
+    elif is_checked == 'not enought message':
+        await split_text(messages.mental_analysis_not_enought_messages_message, callback_query.message, kb.back_to_bot)
+        await callback_query.answer()
+    else:
+        await split_text(messages.wait_mental_analysis_message, callback_query.message)
+        context = await rq.get_context_mental_analysis(user_id)
+        response = await mental_analysis_gpt(context)
+        await callback_query.message.answer(response)
+        # await state.set_state(chatStates.mainChat)
+        await callback_query.answer()
+
 
 @router.message(F.text)
 async def mental_message_error(message: Message):
-    await message.answer('Вы не можете писать в этом чате, можете перейти ', reply_markup=kb.withoutMentalAnalysis)
+    user_id = message.from_user.id
+    is_reg = rq.is_registered(user_id)
+    if is_reg:
+        await message.answer('Вы не можете писать в этом чате, можете перейти ', reply_markup=kb.withoutMentalAnalysis)
+    else:
+        await message.answer('Вы не можете писать в этом чате, можете перейти ', reply_markup=kb.withoutMentalAnalysis)
 
 # ------- Mental analysis
 

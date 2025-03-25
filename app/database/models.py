@@ -21,6 +21,7 @@ class User_info(Base):
     user_name: Mapped[str] = mapped_column(String(100))
     nickname: Mapped[str] = mapped_column(String(80), default='-')
     bot_description: Mapped[str] = mapped_column(Text, default='-')
+    bot_name: Mapped[str] = mapped_column(String(80), default='Бадди')
     user_age: Mapped[int] = mapped_column(default=0)
     user_sex: Mapped[str] = mapped_column(String(10), default='-') # 0 - man, 1 - women
     is_registered: Mapped[bool] = mapped_column(Boolean, default=False)

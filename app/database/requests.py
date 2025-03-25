@@ -1,6 +1,6 @@
 from app.database.models import async_session
 from app.database.models import User_info, User_sub, User_messages,User_log
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, func
 
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
@@ -110,6 +110,19 @@ async def set_bot_description(tg_id, description):
                 
             await session.commit()
 
+async def set_bot_name(tg_id, name):
+    async with async_session() as session:
+        user = await session.scalar(select(User_info).where(User_info.user_id == tg_id))
+
+        if user:
+            
+            await session.execute(
+                    update(User_info).where(User_info.user_id == tg_id).values(
+                        bot_name=name
+                    ))
+                
+            await session.commit()
+
 async def success_registration(tg_id):
     async with async_session() as session:
         user = await session.scalar(select(User_info).where(User_info.user_id == tg_id))
@@ -143,7 +156,7 @@ async def subscribe(tg_id, sub_name, date):
                     update(User_sub).where(User_sub.user_id == tg_id).values(
                         sub=sub_name,
                         time_sub=date,
-                        time_end=date + relativedelta(months=1)
+                        time_end=date + relativedelta(minutes=2)
                     ))
                 
                 await session.commit()
@@ -153,13 +166,13 @@ async def subscribe(tg_id, sub_name, date):
                     update(User_sub).where(User_sub.user_id == tg_id).values(
                         sub=sub_name,
                         time_sub=date,
-                        time_end=date + relativedelta(months=1)
+                        time_end=date + relativedelta(minutes=2)
                     ))
 
                 await session.commit()
         else:
             user.sub = True
-            session.add(User_sub(user_id=tg_id, sub=sub_name, time_sub=date, time_end=date + relativedelta(months=1)))
+            session.add(User_sub(user_id=tg_id, sub=sub_name, time_sub=date, time_end=date + relativedelta(minutes=2)))
             await session.commit()
 
 async def set_user_message(tg_id, username,is_trial, message, answer, time_mes, time_answ):
@@ -171,10 +184,18 @@ async def set_user_message(tg_id, username,is_trial, message, answer, time_mes, 
 async def check_amount_messages(tg_id):
     async with async_session() as session:
         user_messages = await session.execute(select(User_messages).where(User_messages.user_id == tg_id))
+        stmt = select(
+            User_info.user_id,
+            func.row_number().over(order_by=User_info.user_id).label("row_num")
+        ).subquery()
+
+        query = select(stmt.c.row_num).where(stmt.c.user_id == tg_id)
+        result = await session.execute(query)
+
         amount_messages = len(user_messages.scalars().all())
        
 
-        return amount_messages
+        return [amount_messages, result.scalar()]
 
 async def is_sub(tg_id):
     async with async_session() as session:
@@ -191,6 +212,9 @@ async def get_user_sub_info(tg_id):
         user_sub = await session.execute(select(User_sub).where(User_sub.user_id == tg_id))
         current_date = datetime.now()
         sub = user_sub.scalars().first()
+
+        if not sub:
+            return "none"
 
         user_id = sub.user_id
 
@@ -333,7 +357,6 @@ async def get_context(tg_id):
             print('оставшейся контекст: ' + context_message)
             return [context, context_message]
 
-
 async def get_context_mental_analysis(tg_id):
     async with async_session() as session:
         user_message = await session.scalars(select(User_messages).where(User_messages.user_id == tg_id).order_by(User_messages.time_message.asc()))
@@ -352,3 +375,22 @@ async def get_context_mental_analysis(tg_id):
 3. Здоровое убеждение на замену. "Здоровое убеждение. Давай заменим его на здоровое убеждение ... ".
  \n"""
             return context_message
+
+async def check_condition_mental_analysis(tg_id):
+     async with async_session() as session:
+        user = await session.scalar(select(User_info).where(User_info.user_id == tg_id))
+        user_messages = await session.execute(select(User_messages).where(User_messages.user_id == tg_id))
+        amount_messages = len(user_messages.scalars().all())
+        is_sub = user.sub
+
+        if not is_sub:
+            return 'not sub'
+        if amount_messages < 100:
+            return 'not enought message'
+        
+        return True
+
+async def get_user_name(tg_id):
+    async with async_session() as session:
+        user = await session.scalar(select(User_info).where(User_info.user_id == tg_id))
+        return user.nickname
