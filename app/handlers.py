@@ -58,7 +58,7 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
         await send_message(user_id, state, bot)
     else:
         await send_message(user_id, state, bot)
-        
+
 
 tariffs_description = {
     "Базовый" : """
@@ -196,7 +196,7 @@ async def registr_set_name_bot(message:Message, state:FSMContext):
     user_nickname = await rq.get_user_name(user_id)
     await split_text(messages.success_registration_message.format(user_nickname), message,  kb.main)
     await rq.set_bot_name(user_id, name)
-    await state.set_state(chatStates.startChat)
+    await state.set_state(chatStates.mainChat)
 
 @router.callback_query(lambda callback_query: callback_query.data == 'skip_name_bot')
 async def skip_name_bot(callback_query: CallbackQuery, state: FSMContext):
