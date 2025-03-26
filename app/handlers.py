@@ -58,6 +58,7 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
         await send_message(user_id, state, bot)
     else:
         await send_message(user_id, state, bot)
+        
 
 tariffs_description = {
     "Базовый" : """
@@ -80,8 +81,6 @@ Smart тариф:
 """
 }
 
-users_messages = {}
-users_tariff = {}
 
 
 async def get_logs(user_id,previousState:FSMContext, state, type_action):
@@ -112,8 +111,6 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
     is_generate = await generate_text(state)
     
     if is_generate:
-        
-        # await state.set_state(chatStates.set_name)
         user_id = message.from_user.id
         username = message.from_user.username
         if username == None:
@@ -127,12 +124,6 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
         await message.answer('Подождите ответа...')
 
 # ------- registration
-
-# @router.callback_query(lambda callback_query: callback_query.data == 'registration')
-# async def start_registration(callback_query: CallbackQuery, state:FSMContext):
-#     await state.set_state(chatStates.set_name)
-#     await callback_query.message.answer("ВВедите ваше имя:")
-#     await callback_query.answer()
     
 
 @router.message(chatStates.set_name)

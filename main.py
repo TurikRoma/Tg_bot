@@ -9,7 +9,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 async def main():
     await async_main()
-    bot = Bot(token='7048588135:AAGq46bPsco4TS-0eGezkEgttcVhcJLBe9s')
+    bot = Bot(token='7310959822:AAH7gEMRRZsDO7cYR8xFWb-YM-JJjftKxUc')
     dp = Dispatcher()
     dp.include_router(router)
     asyncio.create_task(send_message(970281922, FSMContext, bot))
