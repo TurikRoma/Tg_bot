@@ -228,7 +228,7 @@ async def go_chat_cmd(message: Message, state: FSMContext, bot:Bot):
         await rq.check_sub(user_id)
         await get_logs(user_id, state, "mainChat", 'command')
         await state.set_state(chatStates.mainChat)
-        await message.answer("Вы перешли в чат с Бадди, напишите ей сообщение и она вам ответит!")
+        await message.answer("Вы перешли в чат с Бадди, напишите ему и он вам ответит!")
     else:
         await message.answer('Подождите ответа...')
 
@@ -387,7 +387,7 @@ async def go_chat(callback_query: CallbackQuery, state: FSMContext):
     await get_logs(user_id,state, "mainChat", 'btn')
     await rq.check_sub(user_id)
     await state.set_state(chatStates.mainChat)
-    await callback_query.message.answer("Вы перешли в чат с Бадди, напишите ей сообщение и она вам ответит!")
+    await callback_query.message.answer("Вы перешли в чат с Бадди, напишите ему и он вам ответит!")
     await callback_query.answer()
 
 
@@ -449,7 +449,7 @@ async def go_chat(callback_query: CallbackQuery, state: FSMContext):
     await get_logs(user_id,state, "mainChat", 'btn')
     await rq.check_sub(user_id)
     await state.set_state(chatStates.mainChat)
-    await callback_query.message.answer("Вы перешли в чат с Бадди, напишите ей сообщение и она вам ответит!")
+    await callback_query.message.answer("Вы перешли в чат с Бадди, напишите ему и он вам ответит!")
     await callback_query.answer()  
 
 # --------Chat
@@ -518,7 +518,7 @@ async def start_mental_analysis(callback_query: CallbackQuery, state: FSMContext
         await callback_query.answer()
 
 
-@router.message(F.text)
+@router.message(chatStates.mentalAnalysisChat)
 async def mental_message_error(message: Message):
     user_id = message.from_user.id
     is_reg = rq.is_registered(user_id)
