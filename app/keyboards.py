@@ -44,6 +44,9 @@ mental_analysis_condition = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboar
 back_to_bot = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Болтать с Бадди', callback_data='back_to_bot')],
                                              ])
 
+tech_sup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Тех. поддержка', url='https://t.me/buddyk_support')],
+                                             ])
+
 
 
 
