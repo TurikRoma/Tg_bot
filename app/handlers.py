@@ -42,6 +42,7 @@ class chatStates(StatesGroup):
     set_description_bot = State()
     set_name_bot = State()
     mainChat = State()
+    tech_sup = State()
     tariffsChat = State()
     profileChat = State()
     mentalAnalysisChat = State()
@@ -259,11 +260,8 @@ async def go_chat_cmd(message: Message, state: FSMContext):
 
         await state.set_state(chatStates.tariffsChat)
         selected_tariff = 'Базовый'
-        keyboard = create_tarif_keyboard(selected_tariff)
-        await message.answer("""Базовый тариф:
-        · Стоимость: 10$
-        · Длительность: 1 месяц
-        · Какое-то описание тарифа""", reply_markup=keyboard)
+        # keyboard = create_tarif_keyboard(selected_tariff)
+        await message.answer("", reply_markup=kb.subscribe)
     else:
         await message.answer('Подождите ответа...')
 
@@ -324,11 +322,8 @@ async def tarifs(callback_query: CallbackQuery, state: FSMContext):
 
     await state.set_state(chatStates.tariffsChat)
     selected_tariff = 'Базовый'
-    keyboard = create_tarif_keyboard(selected_tariff)
-    await callback_query.message.answer("""Базовый тариф:
-    · Стоимость: 10$
-    · Длительность: 1 месяц
-    · Какое-то описание тарифа""", reply_markup=keyboard)
+    # keyboard = create_tarif_keyboard(selected_tariff)
+    await callback_query.message.answer("", reply_markup=kb.subscribe)
     await callback_query.answer()
 
 @router.message(chatStates.tariffsChat)
@@ -346,7 +341,7 @@ async def tariffs_message(message: Message, state: FSMContext):
         print(data['tariff'])
         await rq.subscribe(user_id, data['tariff'], current_date)
         await rq.set_user_log(user_id, 'payment', 'success', current_date)
-        await message.answer(f'Поздравляю с успешным приобритением тарифа!', reply_markup=kb.withoutTariffs,
+        await message.answer(f'Поздравляю с успешным приобритением подписки!', reply_markup=kb.withoutTariffs,
                               message_effect_id='5046509860389126442')
     
 
@@ -364,7 +359,7 @@ async def choose_tarif(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
     current_date = datetime.now()
     await rq.set_user_log(user_id, 'btn', 'select_tariff', current_date)
-    selected_tariff = callback_query.message.text.split(' ')[0]
+    selected_tariff = 'Базовый'
     await state.set_data({"tariff": selected_tariff})
     type_payment_keybord = create_payment_type_keybord(selected_tariff)
     await callback_query.message.answer("Выберите способ оплаты:", reply_markup=type_payment_keybord)

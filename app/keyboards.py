@@ -49,6 +49,8 @@ tech_sup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Т�
 
 
 
+subscribe = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Приобрести подписку', callback_data='choose_tariff')],
+                                             ])
 
 
 def create_tarif_keyboard(selected_tariff):

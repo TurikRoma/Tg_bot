@@ -6,6 +6,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from sqlalchemy import String, Boolean, DateTime, Text, BigInteger
 from datetime import datetime
+import app.database.requests as rq
 
 engine = create_async_engine(url=SQL_ALCHEMY)
 
