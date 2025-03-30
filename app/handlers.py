@@ -22,6 +22,8 @@ import app.variables as messages
 router = Router()
 import asyncio
 
+import random
+
 
 
 async def split_text(text, type_answer, keyboard=None):
@@ -33,7 +35,13 @@ async def split_text(text, type_answer, keyboard=None):
             await type_answer.answer(context[q])
             await asyncio.sleep(0.8)
         
-    
+offline_messages = ["Эй, как ты там? Напиши, как себя чувствуешь", "Мы давно не общались... Как ты?",
+                    "Привет, я соскучился, давай поболтаем. Напиши, что ты чувствуешь прямо сейчас?",
+                    "Надеюсь, у тебя все в порядке. Заходи болтать со мной, мы же друзья! ",
+                    "Что тебя больше всего бесит сейчас?",
+                    "Напиши мне 3 положительных момента, который случились за сегодня. Это поможет сфокусироваться на позитиве",
+                    "Надеюсь, сегодня твой день лучше моего(", 
+                    "Кстати, у меня есть возможность психологического разбора твоих установок. Заходи, это очень интересно!"]
 
 class chatStates(StatesGroup):
     set_name = State()
@@ -54,7 +62,8 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
     current_date = datetime.now()
     response = await rq.offline(user_id, current_date)
     if response:
-        await bot.send_message(chat_id=user_id, text="Вас давно не было. Как ваши дела? Может вас что то беспокоит?")
+        message = random.choice(offline_messages)
+        await bot.send_message(chat_id=user_id, text=message)
         await rq.set_user_log(user_id, "offline_message", "Сообщение от бота по истечению 1 дня", current_date)
         await send_message(user_id, state, bot)
     else:
@@ -260,7 +269,7 @@ async def go_chat_cmd(message: Message, state: FSMContext):
         await state.set_state(chatStates.tariffsChat)
         selected_tariff = 'Базовый'
         # keyboard = create_tarif_keyboard(selected_tariff)
-        await message.answer("\u200E", reply_markup=kb.subscribe)
+        await message.answer("КУпить подписку. Цена 500 рублей", reply_markup=kb.subscribe)
     else:
         await message.answer('Подождите ответа...')
 
@@ -322,7 +331,7 @@ async def tarifs(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(chatStates.tariffsChat)
     selected_tariff = 'Базовый'
     # keyboard = create_tarif_keyboard(selected_tariff)
-    await callback_query.message.answer("\u200E", reply_markup=kb.subscribe)
+    await callback_query.message.answer("Купить подписку.Цена 500 рублей", reply_markup=kb.subscribe)
     await callback_query.answer()
 
 @router.message(chatStates.tariffsChat)
