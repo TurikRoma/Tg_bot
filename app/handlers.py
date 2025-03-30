@@ -261,7 +261,7 @@ async def go_chat_cmd(message: Message, state: FSMContext):
         await state.set_state(chatStates.tariffsChat)
         selected_tariff = 'Базовый'
         # keyboard = create_tarif_keyboard(selected_tariff)
-        await message.answer("f", reply_markup=kb.subscribe)
+        await message.answer("\u200E", reply_markup=kb.subscribe)
     else:
         await message.answer('Подождите ответа...')
 
@@ -323,7 +323,7 @@ async def tarifs(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(chatStates.tariffsChat)
     selected_tariff = 'Базовый'
     # keyboard = create_tarif_keyboard(selected_tariff)
-    await callback_query.message.answer("", reply_markup=kb.subscribe)
+    await callback_query.message.answer("\u200E", reply_markup=kb.subscribe)
     await callback_query.answer()
 
 @router.message(chatStates.tariffsChat)
