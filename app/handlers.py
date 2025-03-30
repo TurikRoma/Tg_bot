@@ -88,8 +88,7 @@ async def get_logs(user_id,previousState:FSMContext, state, type_action):
     state_from = await previousState.get_state()
     action = ''
     if state_from == None:
-        action = f'{state}'
-        type_action = 'reload_bot'
+        return
     else:
         state_from = state_from.split(':')[1]
         action = f'from_{state_from}_to_{state}'
