@@ -6,13 +6,17 @@ from app.handlers import send_message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 
+import app.database.requests as rq
+
 
 async def main():
     await async_main()
     bot = Bot(token='7310959822:AAH7gEMRRZsDO7cYR8xFWb-YM-JJjftKxUc')
+    users = await rq.get_all_users()
+    for user_id in users:
+        asyncio.create_task(send_message(user_id, FSMContext, bot))
     dp = Dispatcher()
     dp.include_router(router)
-    asyncio.create_task(send_message(970281922, FSMContext, bot))
     await dp.start_polling(bot)
     
 

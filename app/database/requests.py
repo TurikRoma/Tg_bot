@@ -377,3 +377,12 @@ async def get_user_name(tg_id):
     async with async_session() as session:
         user = await session.scalar(select(User_info).where(User_info.user_id == tg_id))
         return user.nickname
+    
+async def get_all_users():
+    async with async_session() as session:
+        users_info = await session.scalars(select(User_info).where(User_info.is_registered== True))
+        users = []
+        for user in users_info:
+            users.append(user.user_id)
+
+        return users
