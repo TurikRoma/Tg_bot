@@ -14,6 +14,7 @@ async def main():
     bot = Bot(token='7310959822:AAH7gEMRRZsDO7cYR8xFWb-YM-JJjftKxUc')
     users = await rq.get_all_users()
     for user_id in users:
+        print(user_id)
         asyncio.create_task(send_message(user_id, FSMContext, bot))
     dp = Dispatcher()
     dp.include_router(router)
