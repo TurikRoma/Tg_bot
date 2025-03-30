@@ -61,7 +61,26 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
         await send_message(user_id, state, bot)
 
 
-
+tariffs_description = {
+    "Базовый" : """
+Базовый тариф:
+· Стоимость: 10$
+· Длительность: 1 месяц
+· Какое-то описание тарифа
+""",
+    "Продвинутый": """
+Продвинутый тариф:
+· Стоимость: 50$
+· Длительность: 1 месяц
+· Какое-то описание тарифа
+""",
+    "Smart": """
+Smart тариф:
+· Стоимость: 100$
+· Длительность: 1 месяц
+· Какое-то описание тарифа
+"""
+}
 
 
 
@@ -242,7 +261,7 @@ async def go_chat_cmd(message: Message, state: FSMContext):
         await state.set_state(chatStates.tariffsChat)
         selected_tariff = 'Базовый'
         # keyboard = create_tarif_keyboard(selected_tariff)
-        await message.answer("а", reply_markup=kb.subscribe)
+        await message.answer("f", reply_markup=kb.subscribe)
     else:
         await message.answer('Подождите ответа...')
 
