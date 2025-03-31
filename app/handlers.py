@@ -65,6 +65,7 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
         message = random.choice(offline_messages)
         await bot.send_message(chat_id=user_id, text=message)
         await rq.set_user_log(user_id, "offline_message", "Сообщение от бота по истечению 1 дня", current_date)
+        await state.set_state(chatStates.mainChat)
         await send_message(user_id, state, bot)
     else:
         await send_message(user_id, state, bot)
@@ -250,7 +251,7 @@ async def go_chat_cmd(message: Message, state: FSMContext):
         return
     is_generate = await generate_text(state)
     if is_generate:
-        await message.answer("Напишите тех поддержке и она вам ответит", reply_markup=kb.tech_sup)
+        await message.answer(messages.tech_sup_message, reply_markup=kb.tech_sup)
     else:
         await message.answer('Подождите ответа...')
 
@@ -331,7 +332,7 @@ async def tarifs(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(chatStates.tariffsChat)
     selected_tariff = 'Базовый'
     # keyboard = create_tarif_keyboard(selected_tariff)
-    await callback_query.message.answer("Купить подписку.Цена 500 рублей", reply_markup=kb.subscribe)
+    await callback_query.message.answer(messages.payment_message, reply_markup=kb.subscribe)
     await callback_query.answer()
 
 @router.message(chatStates.tariffsChat)

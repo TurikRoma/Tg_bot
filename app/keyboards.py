@@ -69,7 +69,7 @@ def create_payment_type_keybord(selected_tariff):
     stars = 1 if selected_tariff == "Базовый" else 5 if selected_tariff == "Продвинутый" else 10
     rub = 10 if selected_tariff == "Базовый" else 50 if selected_tariff == "Продвинутый" else 100
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f'{stars} ⭐️', callback_data='payment_stars'),
-                                                  InlineKeyboardButton(text=f'{rub} $', callback_data='payment_rub')],
+                                                  InlineKeyboardButton(text=f'{rub} ₽', callback_data='payment_rub')],
                                                  ])
 
 def payment_keyboard(amount, payment_type):
@@ -77,6 +77,6 @@ def payment_keyboard(amount, payment_type):
     if payment_type == "stars":
         builder.button(text=f'Оплатить {amount} ⭐️', pay=True)
     else:
-        builder.button(text=f'Оплатить {amount} $', pay=True)
+        builder.button(text=f'Оплатить {amount}  ₽', pay=True)
 
     return builder.as_markup()
