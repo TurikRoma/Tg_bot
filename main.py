@@ -7,11 +7,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 
 import app.database.requests as rq
+import os
 
 
 async def main():
     await async_main()
-    bot = Bot(token='7310959822:AAH7gEMRRZsDO7cYR8xFWb-YM-JJjftKxUc')
+    bot = Bot(token=os.getenv("BOT_TOKEN"))
     users = await rq.get_all_users()
     for user_id in users:
         print(user_id)

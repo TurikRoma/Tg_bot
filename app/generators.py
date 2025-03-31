@@ -1,12 +1,12 @@
 from openai import AsyncOpenAI
 import httpx
+import os
 
 client = AsyncOpenAI(
-    api_key="sk-bhGeAfyiUE9WPl4BpjrGfO1rEurj8bn7",
+    api_key=os.getenv("API_KEY"),
     base_url="https://api.proxyapi.ru/anthropic/v1",
 )
-    # base_url="https://api.deepseek.com"
-    # api_key="sk-84e33a039c9743b3935c2ccdd2c17b06",
+
 BASE_URL = "https://api.proxyapi.ru/anthropic/v1"
 API_KEY = "sk-bhGeAfyiUE9WPl4BpjrGfO1rEurj8bn7"
 
