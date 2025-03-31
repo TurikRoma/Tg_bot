@@ -270,7 +270,7 @@ async def go_chat_cmd(message: Message, state: FSMContext):
         await state.set_state(chatStates.tariffsChat)
         selected_tariff = 'Базовый'
         # keyboard = create_tarif_keyboard(selected_tariff)
-        await message.answer("КУпить подписку. Цена 500 рублей", reply_markup=kb.subscribe)
+        await message.answer(messages.message, reply_markup=kb.subscribe)
     else:
         await message.answer('Подождите ответа...')
 
