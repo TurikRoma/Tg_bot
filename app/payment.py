@@ -3,7 +3,7 @@ from app.keyboards import payment_keyboard
 
 async def send_invoice_handler(callback_query: CallbackQuery, selected_tariff, payment_type):
     stars = 250 if selected_tariff == "Базовый" else 5 if selected_tariff == "Продвинутый" else 10
-    rub = 500 if selected_tariff == "Базовый" else 50 if selected_tariff == "Продвинутый" else 100
+    rub = 250 if selected_tariff == "Базовый" else 50 if selected_tariff == "Продвинутый" else 100
     amount = 0
     if payment_type == 'stars':
         amount = stars

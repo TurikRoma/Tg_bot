@@ -68,7 +68,7 @@ def create_tarif_keyboard(selected_tariff):
 def create_payment_type_keybord(selected_tariff):
     
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f'250⭐️', callback_data='payment_stars'),
-                                                  InlineKeyboardButton(text=f'500₽', callback_data='payment_rub')],
+                                                  InlineKeyboardButton(text=f'499₽', callback_data='payment_rub')],
                                                  ])
 
 def payment_keyboard(amount, payment_type):
