@@ -1,17 +1,17 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton,InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder  
 
-main = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Переход в чат', callback_data='go_chat')],
+main = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Болтать с Бадди', callback_data='go_chat')],
                                              [InlineKeyboardButton(text='Купить подписку', callback_data='tariffs')],
                                              [InlineKeyboardButton(text='Профиль', callback_data='profile')],
                                              [InlineKeyboardButton(text='Психологический разбор', callback_data='mental_analysis')]])
 
-withoutTariffs = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Переход в чат', callback_data='go_chat')],
+withoutTariffs = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Болтать с Бадди', callback_data='go_chat')],
                                              [InlineKeyboardButton(text='Профиль', callback_data='profile')],
                                              [InlineKeyboardButton(text='Психологический разбор', callback_data='mental_analysis')]
                                              ])
 
-withoutMentalAnalysis = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Переход в чат', callback_data='go_chat')],
+withoutMentalAnalysis = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Болтать с Бадди', callback_data='go_chat')],
                                              [InlineKeyboardButton(text='Купить подписку', callback_data='tariffs')],
                                              [InlineKeyboardButton(text='Профиль', callback_data='profile')],
                                              ])
