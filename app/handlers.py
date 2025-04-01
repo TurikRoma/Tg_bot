@@ -33,7 +33,7 @@ async def split_text(text, type_answer, keyboard=None):
             await type_answer.answer(context[q], reply_markup=keyboard)
         else:
             await type_answer.answer(context[q])
-            await asyncio.sleep(0.8)
+            await asyncio.sleep(3)
         
 offline_messages = ["Эй, как ты там? Напиши, как себя чувствуешь", "Мы давно не общались... Как ты?",
                     "Привет, я соскучился, давай поболтаем. Напиши, что ты чувствуешь прямо сейчас?",
@@ -139,7 +139,7 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
 @router.message(chatStates.set_name)
 async def registr_set_name(message:Message, state:FSMContext):
     if message.text == None:
-        await message.answer("Пожалуйста введите имя")
+        await message.answer("")
         return
     user_id =  message.from_user.id
     nickname = message.text
@@ -422,9 +422,9 @@ async def mainChat_message(message: Message, state: FSMContext, bot:Bot):
         check_sub_response = await rq.check_sub(user_id)
         amount_messages = await rq.check_amount_messages(user_id)
         is_sub = await rq.is_sub(user_id)
-        max_len_message = 50
+        max_len_message = 15
         if amount_messages[1] % 2 == 0:
-            max_len_message = 100
+            max_len_message = 30
 
         if is_sub or amount_messages[0] < max_len_message:
             await state.set_state(chatStates.generateText)
