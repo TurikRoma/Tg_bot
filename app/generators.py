@@ -19,7 +19,7 @@ async def gpt(question,context):
             headers={"Authorization": f"Bearer {API_KEY}"},
             json={
                 "system": context[0],
-                "model": "claude-3-7-sonnet-20250219",  # Убедитесь, что указываете правильную модель
+                "model": "claude-3-5-haiku-20241022",  # Убедитесь, что указываете правильную модель
                 "max_tokens": 1000,
                 "messages": [{"role": "user", "content": context[1] + question}],
             }
