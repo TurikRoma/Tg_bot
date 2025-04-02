@@ -330,8 +330,8 @@ async def get_context(tg_id):
 Используй следующий контекст для формирования ответа:\n"""
 
             for msg in user_message:
-                context_message += (f"Мой вопрос: {msg.message} \n")
-                context_message +=(f"Твой ответ: {msg.answer} \n")
+                context_message += (f"Мой предыдущий вопрос(на него отвечать и писать его не надо): {msg.message} \n")
+                context_message +=(f"Твой предыдущий ответ(на него отвечать и писать его не надо): {msg.answer} \n")
                 tokens = tok_counter(context_message) 
                 print(f"\n \n {tokens} \n \n")
                 if (tokens) >= 2070:
