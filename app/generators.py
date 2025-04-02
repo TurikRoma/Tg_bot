@@ -20,7 +20,7 @@ async def gpt(question,context):
             json={
                 "system": context[0],
                 "model": "claude-3-5-haiku-20241022",  # Убедитесь, что указываете правильную модель
-                "max_tokens": 4000,
+                "max_tokens": 180,
                 "messages": [{"role": "user", "content": context[1] + question}],
             }
         )
@@ -46,7 +46,7 @@ async def mental_analysis_gpt(context):
             json={
                 # "system": context,
                 "model": "claude-3-5-haiku-20241022",  # Убедитесь, что указываете правильную модель
-                "max_tokens": 180,
+                "max_tokens": 4000,
                 "messages": [{"role": "user", "content": context}],
             }
         )
