@@ -139,7 +139,7 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
 @router.message(chatStates.set_name)
 async def registr_set_name(message:Message, state:FSMContext):
     if message.text == None:
-        await message.answer("")
+        await message.answer("Пожалуйста введите корректное имя")
         return
     user_id =  message.from_user.id
     nickname = message.text
@@ -150,11 +150,12 @@ async def registr_set_name(message:Message, state:FSMContext):
 @router.message(chatStates.set_age)
 async def registr_age(message:Message, state:FSMContext):
     if not message.text or not message.text.isdigit():
-        await message.answer("Напиши, сколько тебе лет?")
+        await message.answer("""Я ожидал, что там будет цифра(
+Так сколько тебе лет?)""")
         return
     
     elif int(message.text) > 100:
-        await message.answer("Напиши, сколько тебе лет?")
+        await message.answer("Введите корректный возраст?")
         return
     user_id =  message.from_user.id
     age =  message.text
@@ -451,12 +452,14 @@ async def mainChat_message(message: Message, state: FSMContext, bot:Bot):
             await rq.set_user_message(user_id, username, True, message.text, response[1], time_message, time_answer)
         elif check_sub_response == False:
             current_date = datetime.now()
-            await message.answer('У вас закончилась подписка, приобритите новый тариф.',
+            await message.answer('У вас закончилась подписка. Оформи подписку заного, чтобы продолжить болтать с Бадди',
                                 reply_markup=kb.tarrifs)
             await rq.set_user_log(user_id, 'error-message', 'Subscribe end', current_date)
         else:
             current_date = datetime.now()
-            await message.answer('У вас закончились бесплтаные сообщение, пожалуйста приобретите тариф',
+            await message.answer("""У тебя закончились бесплатные сообщения, пожалуйста, оформи подписку
+
+Нажми купить, чтобы узнать, что в нее входит 👇🏻""",
                                 reply_markup=kb.tarrifs)
             await rq.set_user_log(user_id, 'error-message', 'Free messages end', current_date)
             
