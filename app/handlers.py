@@ -125,6 +125,7 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
         username = message.from_user.username
         if username == None:
             username = "Без имени"
+        
 
         await rq.set_user(user_id, username, message.from_user.is_premium!=None)
         await split_text(messages.welcoming_message, message)
@@ -140,6 +141,9 @@ async def cmd_start(message: Message, state: FSMContext, bot:Bot):
 async def registr_set_name(message:Message, state:FSMContext):
     if message.text == None:
         await message.answer("Пожалуйста введите корректное имя")
+        return
+    if message.text and message.text[0].isalpha() != True:
+        await message.answer("Пожалуйста введите корректное имя(Оно должно начинаться с буквы)")
         return
     user_id =  message.from_user.id
     nickname = message.text
@@ -178,6 +182,9 @@ async def registr_sex(callback_query: CallbackQuery, state:FSMContext):
 async def registr_set_description_bot(message:Message, state:FSMContext):
     if message.text == None:
         await message.answer("Пожалуйста введите описание для бота")
+        return
+    if message.text and message.text[0].isalpha() != True:
+        await message.answer("Пожалуйста введите корректное описание для бота(Оно должно начинаться с буквы)")
         return
     description = message.text
     user_id = message.from_user.id
