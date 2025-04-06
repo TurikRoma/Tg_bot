@@ -83,18 +83,6 @@ async def send_message(user_id, state:FSMContext, bot: Bot):
                 print(f"[Ошибка] при отправке сообщения или логировании: {e}")
 
 
-    await asyncio.sleep(240)
-    current_date = datetime.now()
-    response = await rq.offline(user_id, current_date)
-    if response:
-        message = random.choice(offline_messages)
-        await bot.send_message(chat_id=user_id, text=message)
-        await rq.set_user_log(user_id, "offline_message", "Сообщение от бота по истечению 1 дня", current_date)
-        await send_message(user_id, state, bot)
-        await state.set_state(chatStates.mainChat)
-        
-    else:
-        await send_message(user_id, state, bot)
 
 
 tariffs_description = {
