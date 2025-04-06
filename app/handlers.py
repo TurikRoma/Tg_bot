@@ -58,6 +58,31 @@ class chatStates(StatesGroup):
     generateText = State()
 
 async def send_message(user_id, state:FSMContext, bot: Bot):
+    while True:
+        await asyncio.sleep(3600)  # Ждём 4 минуты
+        current_date = datetime.now()
+        try:
+            response = await rq.offline(user_id, current_date)
+        except Exception as e:
+            print(f"[Ошибка] rq.offline({user_id}) — {e}")
+            continue  # Пропускаем итерацию, если ошибка
+        
+        if response:
+            try:
+                message = random.choice(offline_messages)
+                await bot.send_message(chat_id=user_id, text=message)
+
+                await rq.set_user_log(
+                    user_id,
+                    "offline_message",
+                    "Сообщение от бота по истечению 1 дня",
+                    current_date
+                )
+
+            except Exception as e:
+                print(f"[Ошибка] при отправке сообщения или логировании: {e}")
+
+
     await asyncio.sleep(240)
     current_date = datetime.now()
     response = await rq.offline(user_id, current_date)
