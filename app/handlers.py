@@ -128,6 +128,18 @@ async def generate_text(state:FSMContext):
 
 #--------Commands
 
+@router.message(Command("tech_sup"))
+async def go_chat_cmd(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    is_registered = await rq.is_registered(user_id)
+    if not is_registered:
+        await message.answer('Зарегестрируйтесь пожалуйста')
+        return
+    is_generate = await generate_text(state)
+    if is_generate:
+        await message.answer(messages.tech_sup_message, reply_markup=kb.tech_sup)
+    else:
+        await message.answer('Подождите ответа...')
 
 
 @router.message(CommandStart())
@@ -264,18 +276,7 @@ async def go_chat_cmd(message: Message, state: FSMContext, bot:Bot):
     else:
         await message.answer('Подождите ответа...')
 
-@router.message(Command("tech_sup"))
-async def go_chat_cmd(message: Message, state: FSMContext):
-    user_id = message.from_user.id
-    is_registered = await rq.is_registered(user_id)
-    if not is_registered:
-        await message.answer('Зарегестрируйтесь пожалуйста')
-        return
-    is_generate = await generate_text(state)
-    if is_generate:
-        await message.answer(messages.tech_sup_message, reply_markup=kb.tech_sup)
-    else:
-        await message.answer('Подождите ответа...')
+
 
 @router.message(Command('subscribe'))
 async def go_chat_cmd(message: Message, state: FSMContext):
