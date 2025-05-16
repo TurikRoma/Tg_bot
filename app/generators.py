@@ -1,14 +1,17 @@
 from openai import AsyncOpenAI
 import httpx
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = AsyncOpenAI(
     api_key=os.getenv("API_KEY"),
     base_url="https://api.proxyapi.ru/anthropic/v1",
 )
 
-BASE_URL = "https://api.proxyapi.ru/anthropic/v1"
-API_KEY = "sk-bhGeAfyiUE9WPl4BpjrGfO1rEurj8bn7"
+BASE_URL = os.getenv("BASE_URL")
+API_KEY = os.getenv("API_KEY")
 
 async def gpt(question,context):
 

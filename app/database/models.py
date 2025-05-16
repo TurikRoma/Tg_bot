@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 SQL_ALCHEMY = os.getenv("DATABASE_URL")
 
 
@@ -24,7 +27,7 @@ class User_info(Base):
     bot_description: Mapped[str] = mapped_column(Text, default='-')
     bot_name: Mapped[str] = mapped_column(String(80), default='Бадди')
     user_age: Mapped[int] = mapped_column(default=0)
-    user_sex: Mapped[str] = mapped_column(String(10), default='-') # 0 - man, 1 - women
+    user_sex: Mapped[str] = mapped_column(String(10), default='-') 
     is_registered: Mapped[bool] = mapped_column(Boolean, default=False)
     tg_premium: Mapped[bool] = mapped_column(Boolean)
     sub: Mapped[bool] = mapped_column(Boolean, default=False)

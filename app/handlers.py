@@ -328,16 +328,16 @@ async def mental_analysis_cmd(message:Message, state: FSMContext):
     await split_text(messages.mental_analysis_message, message, kb.mental_analysis_choise)
     
 
-@router.message(Command('refund'))
-async def command_refund_handler(message: Message, bot: Bot, command: CommandObject):
-    transaction_id = command.args
-    try:
-        await bot.refund_star_payment(
-            user_id=message.from_user.id,
-            telegram_payment_charge_id=transaction_id
-        )
-    except Exception as e:
-        print(e)
+# @router.message(Command('refund'))
+# async def command_refund_handler(message: Message, bot: Bot, command: CommandObject):
+#     transaction_id = command.args
+#     try:
+#         await bot.refund_star_payment(
+#             user_id=message.from_user.id,
+#             telegram_payment_charge_id=transaction_id
+#         )
+#     except Exception as e:
+#         print(e)
 # ------Commands
 
 
